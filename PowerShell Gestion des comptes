@@ -34,6 +34,7 @@ Code Exercice 4 Etape 2
 
     foreach ($u in $utilisateurs) {
     # Génération du login (ex: Julie.Bernard)
+
     $username = "$($u.Prenom).$($u.Nom)"
     
 # 3. Création de l'utilisateur
@@ -51,3 +52,22 @@ Code Exercice 4 Etape 2
         Write-Host "Utilisateur $username créé en tant que STANDARD." -ForegroundColor Cyan
     }
 }
+
+# 🌐 Partie 4 : Administration Distante (Travail en Binôme)
+
+### **Étape 1 : Préparation du poste Cible (Utilisateur B)**
+# Active WinRM et configure les exceptions du Pare-feu automatiquement
+Enable-PSRemoting -Force
+
+#Vérification 
+Get-NetFirewallRule | Where-Object {$_.Name -like "*WINRM*"} | Select-Object DisplayName, Enabled
+
+# Étape 2 : Identification (Utilisateur B)
+Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
+
+# Étape 3 : Prise de contrôle (Utilisateur A)
+# Remplacez IP_CIBLE par l'adresse de votre voisin
+Enter-PSSession -ComputerName IP_CIBLE -Credential (Get-Credential)
+
+
+
