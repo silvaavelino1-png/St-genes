@@ -1,0 +1,53 @@
+Code Exercice 1
+# 1. Préparation du mot de passe
+$Secret = "P@ssword2026!" | ConvertTo-SecureString -AsPlainText -Force
+
+# 2. Boucle de création de 1 à 5
+1..5 | ForEach-Object {
+    $Name = "Stagiaire$_"
+    New-LocalUser -Name $Name -Password $Secret -FullName "Compte Test $Name" -Description "TP Avril 2026"
+    Write-Host "Utilisateur $Name créé avec succès." -ForegroundColor Cyan
+}
+
+Code Exercice 2
+# Promotion Administrateur
+Add-LocalGroupMember -Group "Administrateurs" -Member "Stagiaire1"
+
+# Promotion Config Réseau
+Add-LocalGroupMember -Group "Network Configuration Operators" -Member "Stagiaire2"
+
+
+Code Exercice 3
+# Lister les admins
+Get-LocalGroupMember -Group "Administrateurs" | Select-Object Name, PrincipalSource
+
+# Supprimer tous les stagiaires d'un coup (Nettoyage de fin de TP)
+Get-LocalUser | Where-Object { $_.Name -like "Stagiaire*" } | Remove-LocalUser
+
+
+Code Exercice 4 Etape 2
+# 1. Importation des données
+    $utilisateurs = Import-Csv -Path "$HOME\Desktop\utilisateurs.csv"
+
+# 2. Définition d'un mot de passe sécurisé par défaut
+    $password = "Efrei2024!" | ConvertTo-SecureString -AsPlainText -Force
+
+    foreach ($u in $utilisateurs) {
+    # Génération du login (ex: Julie.Bernard)
+    $username = "$($u.Prenom).$($u.Nom)"
+    
+# 3. Création de l'utilisateur
+    New-LocalUser -Name $username `
+                  -Password $password `
+                  -FullName "$($u.Prenom) $($u.Nom)" `
+                  -Description "Poste occupé : $($u.Poste)"
+    
+# 4. Attribution des droits selon le poste
+    if ($u.Poste -eq "Technicien") {
+        Add-LocalGroupMember -Group "Administrateurs" -Member $username
+        Write-Host "Utilisateur $username créé en tant qu'ADMIN." -ForegroundColor Yellow
+    } else {
+        Add-LocalGroupMember -Group "Utilisateurs" -Member $username
+        Write-Host "Utilisateur $username créé en tant que STANDARD." -ForegroundColor Cyan
+    }
+}
